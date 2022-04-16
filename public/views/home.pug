@@ -1,0 +1,30 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title 잔디를 심자
+        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+    body
+        header
+            h1 잔디 관리
+        center
+            p 매일 자정 커밋을 날려서 잔디를 심어드립니다.
+            p 비어있는 잔디를 채워드립니다.
+            br
+            a(id="gitLogin")
+                button 깃허브 로그인
+            br
+        footer
+            center
+                a(href="https://github.com/doldolma/auto-grass" target="_blank")
+                    img(src="/public/images/github.svg" width="30em")
+                br
+                //img(src="/public/images/jandi.jpg" width="100px")
+
+        script.
+            const clientCode = '#{clientId}';
+            window.onload = () => {
+                const gitLogin = document.getElementById("gitLogin");
+                gitLogin.href = "https://github.com/login/oauth/authorize?client_id=" + clientCode + "&scope=repo,user:email";
+            }

@@ -1,0 +1,18 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width")
+        title 잔디를 심자
+        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+    body
+        header
+            p 지정한 날짜에 잔디를 심습니다.
+        center
+            p 시작 날짜
+                input(type="date" id="startDate")
+            p 마지막 날짜
+                input(type="date" id="endDate")
+            button(type="button" id="send") 잔디 심기
+
+        script(src="/public/js/custom.js")

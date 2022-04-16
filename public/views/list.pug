@@ -1,0 +1,123 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width")
+        title 잔디를 심자
+        link(rel="stylesheet", href="https://unpkg.com/mvp.css")
+        script(src="https://unpkg.com/github-calendar@latest/dist/github-calendar.min.js")
+        link(rel="stylesheet", href="https://unpkg.com/github-calendar@latest/dist/github-calendar-responsive.css")
+        style.
+            article {
+                background: #4d4c4c;
+                max-width: 800px;
+            }
+            .commitCount {
+                display: inline-block;
+            }
+            .label {
+                display: flex;
+            }
+            .box {
+                margin-left: 10px;
+            }
+    body
+        nav
+            button(type="button" onclick="location.href='/custom'") 수동으로 잔디심기
+            button(type="button" onclick="location.href='/logout'") 로그아웃
+        center
+            article(background="#black")
+                div(class="calendar")
+                    p Loading the data just for you.
+            br
+            label(class="switch-button") 자동 커밋 등록상태
+                input(type="checkbox" id="onoffSwitch")
+            br
+            label 한번에 들어가는 커밋개수설정
+                div 잔디 하나당 지정된 숫자를 기반한 랜덤한 숫자만큼 커밋을 합니다.
+            div(class="commitCount")
+                label(class="label") 최소값
+                    input(class="box" type="number" size="2" min="1" max="99" id="minCommits")
+
+                label(class="label") 최대값
+                    input(class="box" type="number" size="2" min="1" max="99" id="maxCommits")
+            br
+            button(id="commitButton") 커밋개수 설정
+            h1 커밋 기록
+            table
+                thead
+                    tr
+                        th ID
+                        th 날짜
+                        th 결과
+                        th 메세지
+                        th 만든커밋갯수
+                tbody
+                    each commit in commits
+                        tr
+                            td #{commit.id}
+                            td #{commit.date}
+                            td #{commit.result ? "성공" : "실패"}
+                            td #{commit.message}
+                            td #{commit.count}
+        footer
+            center
+                a(href="https://github.com/doldolma/auto-grass" target="_blank")
+                    img(src="/public/images/github.svg" width="30px")
+        script.
+            window.onload = () => {
+                const onoffSwitch = document.getElementById("onoffSwitch");
+                const commitButton = document.getElementById("commitButton");
+                const minCommits = document.getElementById("minCommits");
+                const maxCommits = document.getElementById("maxCommits");
+
+                onoffSwitch.checked = #{user.active ? true : false};
+                minCommits.value = #{user.minCommits};
+                maxCommits.value = #{user.maxCommits};
+
+                GitHubCalendar(".calendar", "#{user.login}", {responsive: true, tooltips: true, cache: 1});
+
+                onoffSwitch.addEventListener("change", (e) => {
+                    const checkd = onoffSwitch.checked;
+                    fetch("/user/commit/onoff", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({ onOff: checkd })})
+                    .then((res) => {
+                        if(!res.ok) {
+                            onoffSwitch.checked = !checkd;
+                            return;
+                        }
+                        if(checkd) alert("자동 잔디심기가 등록되었습니다.\n자정마다 잔디를 심습니다.");
+                        else alert("자동 잔디심기가 등록해제되었습니다.");
+                    }).catch(() => onoffSwitch.checked = !checkd);
+                });
+
+                commitButton.addEventListener("click", (e) => {
+                    const minCount = minCommits.value;
+                    const maxCount = maxCommits.value;
+                    if(minCount > maxCount) {
+                        alert("최대값은 최소값보다 커야 합니다.");
+                        return;
+                    }
+
+                    if(maxCount > 99) {
+                        alert("최대값은 99이하 이어야 합니다.");
+                        return;
+                    }
+
+                    if(minCount <= 0) {
+                        alert("최소값은 0보다 큰 값이어야 합니다.");
+                        return;
+                    }
+
+                    fetch("/user/commit/count", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({minCount, maxCount})
+                    }).then((res) => {
+                        if(res.ok) alert("커밋개수가 설정되었습니다.\n잔디를 심을 때 해당 값을 기준으로 커밋개수를 조절합니다.");
+                        else alert("에러발생");
+                    }).catch(() => alert("에러발생.."));
+                });
+            }

@@ -1,0 +1,33 @@
+{
+  "name": "auto-grass",
+  "version": "1.0.0",
+  "description": "auto-grass",
+  "main": "app.js",
+  "scripts": {
+    "start": "DEBUG=app* & node app.js",
+    "dev": "DEBUG=app* nodemon app.js",
+    "windows": "set DEBUG=app* & nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.0",
+    "cheerio": "^1.0.0-rc.10",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "debug": "^4.3.3",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-mysql-session": "^2.1.7",
+    "express-session": "^1.17.2",
+    "mariadb": "^3.0.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.3.3",
+    "node-schedule": "^2.1.0",
+    "pm2": "^5.2.0",
+    "pug": "^3.0.2",
+    "sequelize": "^6.16.1",
+    "uuid": "^8.3.2"
+  }
+}
